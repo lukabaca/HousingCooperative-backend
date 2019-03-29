@@ -1,6 +1,11 @@
 package pl.dmcs.blaszczyk.config;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import pl.dmcs.blaszczyk.security.JWTAuthenticationEntryPoint;
 import pl.dmcs.blaszczyk.security.JWTAuthenticationFilter;
 import pl.dmcs.blaszczyk.security.JWTAuthorizationFilter;
 import pl.dmcs.blaszczyk.security.JWTConfig;
@@ -26,14 +31,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private JWTAuthenticationEntryPoint unauthorizedHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, JWTConfig.getSignUpUrl()).permitAll()
-                .anyRequest().authenticated()
+        http
+                .csrf()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()));
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Override
@@ -44,6 +62,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter() {
+        return new JWTAuthenticationFilter();
+    }
+
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
 }

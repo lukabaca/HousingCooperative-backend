@@ -1,4 +1,5 @@
 package pl.dmcs.blaszczyk.service;
+import org.springframework.security.core.userdetails.UserDetails;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.dmcs.blaszczyk.model.Request.RegistrationRequest;
@@ -10,4 +11,5 @@ public interface AuthService extends UserDetailsService {
     List<AppUser> getUsers();
     AppUser getUser(Long id);
     EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id);
+    UserDetails loadUserById(Long id);
 }
