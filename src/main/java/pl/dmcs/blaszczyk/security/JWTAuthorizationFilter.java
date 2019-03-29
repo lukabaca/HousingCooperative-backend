@@ -7,6 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import pl.dmcs.blaszczyk.service.CustomUserDetailsService;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Autowired
-    private AuthService authService;
+    private CustomUserDetailsService customUserDetailsService;
 
     public JWTAuthorizationFilter(AuthenticationManager authManager) {
         super(authManager);
@@ -46,7 +48,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                     .getBody()
                     .getSubject();
             if (username != null) {
-                UserDetails appUser = authService.loadUserByUsername(username);
+                UserDetails appUser = customUserDetailsService.loadUserByUsername(username);
                 return new UsernamePasswordAuthenticationToken(appUser, null, new ArrayList<>());
             }
             return null;

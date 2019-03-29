@@ -61,21 +61,4 @@ public class AuthServiceImp implements AuthService {
         }
         return null;
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        AppUser applicationUser = appUserRepository.findByEmail(username);
-        if (applicationUser == null) {
-            throw new ResourceNotFoundException();
-        }
-//        applicationUser.setPassword();
-        return applicationUser;
-    }
-
-    @Transactional
-    public UserDetails loadUserById(Long id) {
-        AppUser applicationUser = appUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return applicationUser;
-    }
 }

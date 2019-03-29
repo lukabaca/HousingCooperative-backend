@@ -52,7 +52,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override

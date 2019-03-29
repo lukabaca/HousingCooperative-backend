@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.dmcs.blaszczyk.model.Entity.Building;
+import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BuildingRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BuildingRepository;
@@ -23,7 +24,7 @@ public class BuildingServiceImp implements BuildingService {
 
     @Override
     public Building getBuilding(Long id) {
-        return null;
+        return buildingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
     }
 
     @Override
