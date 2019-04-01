@@ -2,22 +2,27 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.Building;
+import pl.dmcs.blaszczyk.model.Entity.HousingCooperative;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BuildingRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BuildingRepository;
+import pl.dmcs.blaszczyk.repository.HousingCooperativeRepository;
 import pl.dmcs.blaszczyk.service.BuildingService;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BuildingServiceImp implements BuildingService {
 
     @Autowired
     BuildingRepository buildingRepository;
+
+    @Autowired
+    HousingCooperativeRepository housingCooperativeRepository;
 
     @Override
     public List<Building> getBuildings() {
@@ -68,8 +73,20 @@ public class BuildingServiceImp implements BuildingService {
         buildingRepository.delete(optionalBuilding.get());
     }
 
+    @Transactional
     @Override
-    public void assignBuildingToHousingCooperative(Long buildingId, Long housingCooperative) {
-
+    public void assignBuildingToHousingCooperative(Long buildingId, Long housingCooperativeId) {
+        Optional<Building> optionalBuilding = buildingRepository.findById(buildingId);
+        Optional<HousingCooperative> optionalHousingCooperative = housingCooperativeRepository.findById(housingCooperativeId);
+        if (!optionalBuilding.isPresent() || !optionalHousingCooperative.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        HousingCooperative housingCooperative = optionalHousingCooperative.get();
+        Building building = optionalBuilding.get();
+        Set<Building> buildings = housingCooperative.getBuildings();
+        building.setHousingCooperative(housingCooperative);
+        buildings.add(building);
+        housingCooperative.setBuildings(buildings);
+        housingCooperativeRepository.save(housingCooperative);
     }
 }

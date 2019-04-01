@@ -1,6 +1,10 @@
 package pl.dmcs.blaszczyk.model.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name="HousingCooperative")
@@ -11,7 +15,8 @@ public class HousingCooperative {
     private String name;
 
     @OneToMany(mappedBy = "housingCooperative", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Building> buildings;
+    @JsonBackReference
+    private Set<Building> buildings = new HashSet<Building>();
 
     public Long getId() {
         return id;

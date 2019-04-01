@@ -57,4 +57,10 @@ public class HousingCooperativeController {
         HousingCooperative housingCooperative = housingCooperativeService.getHousingCooperative(id);
         return new ResponseEntity<HousingCooperative>(housingCooperative, HttpStatus.OK);
     }
+
+    @PutMapping("assignBuildingToHousingCooperative/{buildingId}/{housingCooperativeId}")
+    public ResponseEntity<?> assignBuildingToHousingCooperative(@RequestParam Long buildingId, @RequestParam Long housingCooperativeId) {
+        buildingService.assignBuildingToHousingCooperative(buildingId, housingCooperativeId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
