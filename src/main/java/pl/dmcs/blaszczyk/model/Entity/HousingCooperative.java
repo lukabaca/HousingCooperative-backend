@@ -10,7 +10,7 @@ public class HousingCooperative {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "housingCooperative")
+    @OneToMany(mappedBy = "housingCooperative", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Building> buildings;
 
     public Long getId() {

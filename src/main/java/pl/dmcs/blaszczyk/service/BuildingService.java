@@ -11,5 +11,6 @@ public interface BuildingService {
     Building getBuilding(Long id);
     EntityCreatedResponse createBuilding(BuildingRequest buildingRequest);
     EntityCreatedResponse updateBuilding(Long id, BuildingRequest buildingRequest);
+    void deleteBuilding(Long id);
     void assignBuildingToHousingCooperative(Long buildingId, Long housingCooperative);
 }
