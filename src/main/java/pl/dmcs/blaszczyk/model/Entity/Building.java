@@ -1,4 +1,5 @@
 package pl.dmcs.blaszczyk.model.Entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -20,6 +21,7 @@ public class Building {
     private HousingCooperative housingCooperative;
 
     @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonBackReference
     private Set<Premise> premises;
 
     public Set<Premise> getPremises() {
