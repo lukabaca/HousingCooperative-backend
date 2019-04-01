@@ -1,4 +1,4 @@
-package pl.dmcs.blaszczyk.service.serviceIMPL;
+package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import pl.dmcs.blaszczyk.model.Entity.Resident;
 import pl.dmcs.blaszczyk.repository.ResidentRepository;

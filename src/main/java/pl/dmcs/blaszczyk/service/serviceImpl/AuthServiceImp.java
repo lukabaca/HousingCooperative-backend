@@ -1,6 +1,8 @@
-package pl.dmcs.blaszczyk.service.serviceIMPL;
+package pl.dmcs.blaszczyk.service.serviceImpl;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
+import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.RegistrationRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.AppUserRepository;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +25,14 @@ public class AuthServiceImp implements AuthService {
     @Autowired
     AppUserRepository appUserRepository;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public EntityCreatedResponse save(RegistrationRequest registrationRequest) {
             AppUser appUser = new AppUser();
-            appUser.setUsername(registrationRequest.getFirstName());
-            appUser.setPassword(registrationRequest.getPassword());
+            appUser.setEmail(registrationRequest.getEmail());
+            appUser.setPassword(bCryptPasswordEncoder.encode(registrationRequest.getPassword()));
             Long userId = appUserRepository.saveAndFlush(appUser).getId();
             return new EntityCreatedResponse(userId);
     }
@@ -49,19 +55,10 @@ public class AuthServiceImp implements AuthService {
     public EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id) {
         AppUser appUser = getUser(id);
         if (appUser != null) {
-            appUser.setUsername(registrationRequest.getFirstName());
+            appUser.setEmail(registrationRequest.getEmail());
             Long userId = appUserRepository.saveAndFlush(appUser).getId();
             return new EntityCreatedResponse(userId);
         }
         return null;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser applicationUser = appUserRepository.findByUsername(username);
-        if (applicationUser == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new User(applicationUser.getUsername(), applicationUser.getPassword(), emptyList());
     }
 }
