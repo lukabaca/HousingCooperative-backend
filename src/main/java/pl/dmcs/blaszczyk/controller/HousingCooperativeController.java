@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.Building;
 import pl.dmcs.blaszczyk.model.Entity.HousingCooperative;
@@ -22,6 +23,7 @@ public class HousingCooperativeController {
     @Autowired
     HousingCooperativeService housingCooperativeService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("buildings")
     public ResponseEntity<List<Building>> getBuildings() {
         List<Building> buildings = buildingService.getBuildings();
