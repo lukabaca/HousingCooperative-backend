@@ -1,5 +1,7 @@
 package pl.dmcs.blaszczyk.model.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity(name="Premise")
@@ -12,6 +14,7 @@ public class Premise {
     private int roomCount;
 
     @ManyToOne
+    @JsonManagedReference
     private Building building;
 
     public Building getBuilding() {
