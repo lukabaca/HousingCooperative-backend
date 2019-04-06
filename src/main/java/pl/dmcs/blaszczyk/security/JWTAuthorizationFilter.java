@@ -1,6 +1,5 @@
 package pl.dmcs.blaszczyk.security;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.dmcs.blaszczyk.service.AuthService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,13 +7,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import pl.dmcs.blaszczyk.service.CustomUserDetailsService;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -49,7 +46,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                     .getSubject();
             if (username != null) {
                 UserDetails appUser = customUserDetailsService.loadUserByUsername(username);
-                return new UsernamePasswordAuthenticationToken(appUser, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(appUser, null, appUser.getAuthorities());
             }
             return null;
         }

@@ -1,15 +1,19 @@
 package pl.dmcs.blaszczyk.model.Response;
 
 public class JWTAuthenticationResponse {
-    private String accessToken;
+    private String token;
     private String tokenType = "Bearer";
 
-    public String getAccessToken() {
-        return accessToken;
+    public JWTAuthenticationResponse(String token) {
+        this.token = token;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getTokenType() {
@@ -18,9 +22,5 @@ public class JWTAuthenticationResponse {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
-    }
-
-    public JWTAuthenticationResponse(String accessToken) {
-        this.accessToken = accessToken;
     }
 }
