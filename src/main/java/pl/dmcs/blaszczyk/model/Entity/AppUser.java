@@ -6,10 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity(name="AppUser")
 public class AppUser implements UserDetails {
@@ -24,6 +21,17 @@ public class AppUser implements UserDetails {
     @ManyToOne
     @JsonManagedReference
     private Role role;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Premise> premises;
+
+    public Set<Premise> getPremises() {
+        return premises;
+    }
+
+    public void setPremises(Set<Premise> premises) {
+        this.premises = premises;
+    }
 
     public Role getRole() {
         return role;
