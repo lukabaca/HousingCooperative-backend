@@ -11,4 +11,5 @@ public interface BillService {
     List<Bill> getBills();
     EntityCreatedResponse createBill(Bill bill);
     EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest);
+    Bill findBillByMeasurementId(Long measurementId);
 }

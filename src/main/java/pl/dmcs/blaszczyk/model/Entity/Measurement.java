@@ -14,7 +14,8 @@ public class Measurement {
     private double coldWater;
     private double heating;
     private boolean isAccepted;
-
+    private int month;
+    private int year;
 
     public Long getId() {
         return id;
@@ -63,5 +64,22 @@ public class Measurement {
     public void setAccepted(boolean accepted) {
         isAccepted = accepted;
     }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
 }
 
