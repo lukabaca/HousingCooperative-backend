@@ -23,7 +23,7 @@ public class HousingCooperativeController {
     @Autowired
     HousingCooperativeService housingCooperativeService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("buildings")
     public ResponseEntity<List<Building>> getBuildings() {
         List<Building> buildings = buildingService.getBuildings();

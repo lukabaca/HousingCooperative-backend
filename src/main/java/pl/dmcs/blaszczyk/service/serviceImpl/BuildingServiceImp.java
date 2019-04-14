@@ -39,10 +39,13 @@ public class BuildingServiceImp implements BuildingService {
         if (buildingRequest == null) {
             throw new BadRequestException();
         }
+        Long housingCooperativeId = Long.valueOf(1);
         Building building = new Building();
         building.setCity(buildingRequest.getCity());
         building.setNumber(buildingRequest.getNumber());
         building.setAddress(buildingRequest.getAddress());
+        HousingCooperative housingCooperative = this.housingCooperativeRepository.findById(housingCooperativeId).orElseThrow(() -> new ResourceNotFoundException());
+        building.setHousingCooperative(housingCooperative);
         Long buildingId = buildingRepository.saveAndFlush(building).getId();
         return new EntityCreatedResponse(buildingId);
     }
