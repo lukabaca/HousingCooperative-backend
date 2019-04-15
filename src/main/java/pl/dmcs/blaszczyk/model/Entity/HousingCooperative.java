@@ -14,7 +14,7 @@ public class HousingCooperative {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "housingCooperative", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "housingCooperative", fetch = FetchType.EAGER)
     @JsonBackReference
     private Set<Building> buildings = new HashSet<Building>();
 
