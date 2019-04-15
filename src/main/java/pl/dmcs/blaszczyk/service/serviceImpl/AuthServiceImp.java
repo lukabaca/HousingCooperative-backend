@@ -3,23 +3,20 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Role;
+import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
+import pl.dmcs.blaszczyk.model.Exception.UserAlreadyExistException;
 import pl.dmcs.blaszczyk.model.Request.RegistrationRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.AppUserRepository;
 import pl.dmcs.blaszczyk.repository.RoleRepository;
 import pl.dmcs.blaszczyk.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 
 @Service
 public class AuthServiceImp implements AuthService {
@@ -35,6 +32,13 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public EntityCreatedResponse save(RegistrationRequest registrationRequest) {
+            if (registrationRequest == null) {
+                throw new BadRequestException();
+            }
+            AppUser appUserTemp = appUserRepository.findByEmail(registrationRequest.getEmail());
+            if (appUserTemp != null) {
+                throw new UserAlreadyExistException("User with this email exists");
+            }
             AppUser appUser = new AppUser();
             appUser.setEmail(registrationRequest.getEmail());
             appUser.setPassword(bCryptPasswordEncoder.encode(registrationRequest.getPassword()));

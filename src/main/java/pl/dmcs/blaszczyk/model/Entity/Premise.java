@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.model.Entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name="Premise")
 public class Premise {
@@ -16,6 +17,17 @@ public class Premise {
     @ManyToOne
     @JsonManagedReference
     private Building building;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<AppUser> appUser;
+
+    public Set<AppUser> getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(Set<AppUser> appUser) {
+        this.appUser = appUser;
+    }
 
     public Building getBuilding() {
         return building;
