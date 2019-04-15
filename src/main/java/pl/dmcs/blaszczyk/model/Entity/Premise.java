@@ -1,5 +1,6 @@
 package pl.dmcs.blaszczyk.model.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ public class Premise {
     private int roomCount;
 
     @ManyToOne
-    @JsonManagedReference
+    @JsonBackReference
     private Building building;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

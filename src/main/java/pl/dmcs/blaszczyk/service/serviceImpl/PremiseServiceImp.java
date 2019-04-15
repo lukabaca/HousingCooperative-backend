@@ -2,11 +2,13 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.dmcs.blaszczyk.model.Entity.Building;
 import pl.dmcs.blaszczyk.model.Entity.Premise;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.PremiseRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
+import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.repository.PremiseRepository;
 import pl.dmcs.blaszczyk.service.PremiseService;
 import java.util.List;
@@ -17,6 +19,9 @@ public class PremiseServiceImp implements PremiseService {
 
     @Autowired
     PremiseRepository premiseRepository;
+
+    @Autowired
+    BuildingRepository buildingRepository;
 
     @Override
     public List<Premise> getPremises() {
@@ -37,6 +42,8 @@ public class PremiseServiceImp implements PremiseService {
         premise.setNumber(premiseRequest.getNumber());
         premise.setRoomCount(premiseRequest.getRoomCount());
         premise.setSpace(premiseRequest.getRoomCount());
+        Building building = buildingRepository.findById(premiseRequest.getBuildingId()).orElseThrow(() -> new ResourceNotFoundException());
+        premise.setBuilding(building);
         Long premiseId = premiseRepository.saveAndFlush(premise).getId();
         return new EntityCreatedResponse(premiseId);
     }
