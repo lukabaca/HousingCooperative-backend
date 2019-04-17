@@ -21,7 +21,7 @@ public class Building {
     private HousingCooperative housingCooperative;
 
     @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonBackReference
+    @JsonManagedReference
     private Set<Premise> premises;
 
     public Set<Premise> getPremises() {

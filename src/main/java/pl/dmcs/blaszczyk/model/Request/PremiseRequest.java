@@ -4,6 +4,15 @@ public class PremiseRequest {
     private int number;
     private double space;
     private int roomCount;
+    private Long buildingId;
+
+    public Long getBuildingId() {
+        return buildingId;
+    }
+
+    public void setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
+    }
 
     public int getNumber() {
         return number;
