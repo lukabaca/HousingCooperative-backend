@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Role;
+import pl.dmcs.blaszczyk.model.Entity.UserInfo;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Exception.UserAlreadyExistException;
@@ -45,6 +46,11 @@ public class AuthServiceImp implements AuthService {
             Long roleId = registrationRequest.getRoleId();
             Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException());
             appUser.setRole(role);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setName(registrationRequest.getName());
+            userInfo.setSurname(registrationRequest.getSurname());
+            userInfo.setBirthDate(registrationRequest.getBirthDate());
+            appUser.setUserInfo(userInfo);
             Long userId = appUserRepository.saveAndFlush(appUser).getId();
             return new EntityCreatedResponse(userId);
     }

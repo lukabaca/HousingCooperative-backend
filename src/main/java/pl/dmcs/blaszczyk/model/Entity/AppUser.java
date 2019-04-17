@@ -25,6 +25,17 @@ public class AppUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Premise> premises;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private UserInfo userInfo;
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
     public Set<Premise> getPremises() {
         return premises;
     }
@@ -100,7 +111,6 @@ public class AppUser implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

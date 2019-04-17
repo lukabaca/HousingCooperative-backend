@@ -1,8 +1,11 @@
 package pl.dmcs.blaszczyk.model.Request;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 public class RegistrationRequest {
     @Email
@@ -14,22 +17,18 @@ public class RegistrationRequest {
 
     @Size(min = 2, max = 255)
     @NotNull
-    private String firstName;
+    private String name;
 
     @Size(min = 2, max = 255)
     @NotNull
-    private String lastName;
+    private String surname;
+
+    @NotNull
+    @DateTimeFormat
+    private Date birthDate;
 
     @NotNull
     private Long roleId;
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
 
     public String getEmail() {
         return email;
@@ -47,19 +46,35 @@ public class RegistrationRequest {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 }
