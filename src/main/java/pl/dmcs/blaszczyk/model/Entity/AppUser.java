@@ -17,6 +17,7 @@ public class AppUser implements UserDetails {
     private String email;
     @JsonIgnore
     private String password;
+    private boolean isActive;
 
     @ManyToOne
     @JsonManagedReference
@@ -112,7 +113,15 @@ public class AppUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive();
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
 }

@@ -20,6 +20,7 @@ import pl.dmcs.blaszczyk.security.JWTTokenProvider;
 import pl.dmcs.blaszczyk.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.dmcs.blaszczyk.utils.EmailUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -99,5 +100,15 @@ public class AuthController {
     public ResponseEntity<List<Role>> getRole() {
         List<Role> roles = authService.getRoles();
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
+    }
+
+    @GetMapping("sendMail")
+    public String sendMail() {
+        try {
+            EmailUtil.sendAsHtml("lukadmcs@gmail.com", "Title", "test");
+            return "a";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }
