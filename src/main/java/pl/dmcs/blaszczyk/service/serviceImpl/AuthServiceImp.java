@@ -1,6 +1,7 @@
 package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.Role;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
 public class AuthServiceImp implements AuthService {
 
     @Autowired

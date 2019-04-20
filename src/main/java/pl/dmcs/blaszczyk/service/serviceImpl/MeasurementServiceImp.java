@@ -2,6 +2,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
 import pl.dmcs.blaszczyk.model.Entity.Measurement;
 import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional
 public class MeasurementServiceImp implements MeasurementService {
 
     @Autowired

@@ -2,6 +2,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ActivationTokenServiceImp implements ActivationTokenService {
 
     @Autowired

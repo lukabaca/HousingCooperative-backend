@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class WrongMeasurementDateException extends RuntimeException {
     public WrongMeasurementDateException() {
-
     }
-
     public WrongMeasurementDateException(String message) {
         super(message);
     }

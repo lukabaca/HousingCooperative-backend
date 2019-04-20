@@ -16,6 +16,7 @@ import pl.dmcs.blaszczyk.service.BuildingService;
 import java.util.*;
 
 @Service
+@Transactional
 public class BuildingServiceImp implements BuildingService {
 
     @Autowired

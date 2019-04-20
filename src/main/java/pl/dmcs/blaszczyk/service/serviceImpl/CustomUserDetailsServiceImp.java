@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.repository.AppUserRepository;
 import pl.dmcs.blaszczyk.service.CustomUserDetailsService;
 
-import javax.transaction.Transactional;
-
 @Service
+@Transactional
 public class CustomUserDetailsServiceImp implements CustomUserDetailsService {
 
     @Autowired
