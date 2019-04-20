@@ -17,6 +17,7 @@ public class AppUser implements UserDetails {
     private String email;
     @JsonIgnore
     private String password;
+    @JsonIgnore
     private boolean isActive;
 
     @ManyToOne

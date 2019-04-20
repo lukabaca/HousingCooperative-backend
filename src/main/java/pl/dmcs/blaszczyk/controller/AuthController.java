@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Role;
 import pl.dmcs.blaszczyk.model.Request.LoginRequest;
@@ -17,9 +18,11 @@ import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.model.Response.JWTAuthenticationResponse;
 import pl.dmcs.blaszczyk.security.JWTConfig;
 import pl.dmcs.blaszczyk.security.JWTTokenProvider;
+import pl.dmcs.blaszczyk.service.ActivationTokenService;
 import pl.dmcs.blaszczyk.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.dmcs.blaszczyk.service.MailingService;
 import pl.dmcs.blaszczyk.utils.EmailUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +37,9 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    ActivationTokenService activationTokenService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -102,13 +108,16 @@ public class AuthController {
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
     }
 
-    @GetMapping("sendMail")
-    public String sendMail() {
-        try {
-            EmailUtil.sendAsHtml("lukadmcs@gmail.com", "Title", "test");
-            return "a";
-        } catch (Exception e) {
-            return e.getMessage();
-        }
+//    @GetMapping("sendMail")
+//    public String sendMail() {
+//        mailingService.sendMail("lukadmcs@gmail.com", "Title", "Link aktywacyjny do konta: ");
+//        return "a";
+//    }
+
+    @GetMapping("activateAccount/{activationToken}")
+    public ResponseEntity<?> activateAccount(@PathVariable String activationToken) {
+        ActivationToken token = activationTokenService.getActivationToken(activationToken);
+        authService.activateAccount(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

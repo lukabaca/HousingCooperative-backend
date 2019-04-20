@@ -16,8 +16,6 @@ public class EmailUtil {
         props.put("mail.smtp.host", "smtp.gmail.com"); //Outgoing server (SMTP) - change it to your SMTP server
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.port", "465");//Outgoing port
-//        props.put("mail.smtp.SSLSocketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//        props.put("mail.smtp.socketFactory.port", "465");
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.ssl.enable", "true");
 
