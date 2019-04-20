@@ -1,8 +1,10 @@
-package pl.dmcs.blaszczyk.controller;
+package pl.dmcs.blaszczyk.exceptionHandling;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -19,6 +21,15 @@ public class GlobalExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         ApiError apiError = new ApiError(ex.getMessage());
         HttpStatus status = getHttpStatusByExceptionType(ex);
+        return handleExceptionInternal(ex, headers, status, request, apiError);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity handleBindingErrors(Exception ex, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String msg = ex.getMessage();
+        ApiError apiError = new ApiError(msg);
         return handleExceptionInternal(ex, headers, status, request, apiError);
     }
 
