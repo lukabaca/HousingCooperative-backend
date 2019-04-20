@@ -28,7 +28,7 @@ public class PremiseController {
     @PostMapping("premise")
     public ResponseEntity<EntityCreatedResponse> createPremise(@RequestBody PremiseRequest premiseRequest) {
         EntityCreatedResponse entityCreatedResponse = premiseService.createPremise(premiseRequest);
-        return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.OK);
+        return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("premise/{id}")

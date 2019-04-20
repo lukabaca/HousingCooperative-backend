@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Role;
 import pl.dmcs.blaszczyk.model.Request.LoginRequest;
@@ -17,6 +18,7 @@ import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.model.Response.JWTAuthenticationResponse;
 import pl.dmcs.blaszczyk.security.JWTConfig;
 import pl.dmcs.blaszczyk.security.JWTTokenProvider;
+import pl.dmcs.blaszczyk.service.ActivationTokenService;
 import pl.dmcs.blaszczyk.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +35,9 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    ActivationTokenService activationTokenService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -99,5 +104,12 @@ public class AuthController {
     public ResponseEntity<List<Role>> getRole() {
         List<Role> roles = authService.getRoles();
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
+    }
+
+    @GetMapping("activateAccount/{activationToken}")
+    public ResponseEntity<?> activateAccount(@PathVariable String activationToken) {
+        ActivationToken token = activationTokenService.getActivationToken(activationToken);
+        authService.activateAccount(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

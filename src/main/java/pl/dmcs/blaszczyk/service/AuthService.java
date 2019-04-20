@@ -1,5 +1,6 @@
 package pl.dmcs.blaszczyk.service;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.dmcs.blaszczyk.model.Entity.Role;
@@ -13,4 +14,5 @@ public interface AuthService {
     AppUser getUser(Long id);
     EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id);
     List<Role> getRoles();
+    void activateAccount(ActivationToken activationToken);
 }
