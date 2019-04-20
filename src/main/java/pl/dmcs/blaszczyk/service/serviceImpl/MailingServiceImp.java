@@ -23,12 +23,10 @@ public class MailingServiceImp implements MailingService {
     @Override
     public void sendMail(String to, String title, String messageContent) {
         try {
-            System.out.println("Sending email to " + to);
             Session session = createSession();
             MimeMessage message = new MimeMessage(session);
             prepareEmailMessage(message, to, title, messageContent);
             Transport.send(message);
-            System.out.println("Done");
         } catch (MessagingException e) {
             throw new ServerException("Error in sending mail");
         }

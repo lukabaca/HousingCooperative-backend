@@ -22,8 +22,6 @@ import pl.dmcs.blaszczyk.service.ActivationTokenService;
 import pl.dmcs.blaszczyk.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import pl.dmcs.blaszczyk.service.MailingService;
-import pl.dmcs.blaszczyk.utils.EmailUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -107,12 +105,6 @@ public class AuthController {
         List<Role> roles = authService.getRoles();
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
     }
-
-//    @GetMapping("sendMail")
-//    public String sendMail() {
-//        mailingService.sendMail("lukadmcs@gmail.com", "Title", "Link aktywacyjny do konta: ");
-//        return "a";
-//    }
 
     @GetMapping("activateAccount/{activationToken}")
     public ResponseEntity<?> activateAccount(@PathVariable String activationToken) {
