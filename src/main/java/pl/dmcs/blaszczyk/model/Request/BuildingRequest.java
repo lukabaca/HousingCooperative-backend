@@ -4,7 +4,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 
 public class BuildingRequest {
-    
+
     private int number;
     @NotBlank
     private String address;

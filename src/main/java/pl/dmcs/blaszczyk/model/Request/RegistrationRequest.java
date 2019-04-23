@@ -15,12 +15,12 @@ public class RegistrationRequest {
     @NotBlank
     private String password;
 
-    @NotNull
-    @Size(min = 2, max = 50)
+    @Size(max = 50, min = 2)
+    @NotBlank
     private String name;
 
-    @NotNull
-    @Size(min = 2, max = 50)
+    @Size(max = 50, min = 2)
+    @NotBlank
     private String surname;
 
     @NotNull

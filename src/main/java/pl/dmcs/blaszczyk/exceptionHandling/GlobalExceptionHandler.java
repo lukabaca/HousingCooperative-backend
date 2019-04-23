@@ -12,6 +12,8 @@ import org.springframework.web.util.WebUtils;
 import pl.dmcs.blaszczyk.model.Exception.*;
 import pl.dmcs.blaszczyk.model.Utils.ApiError;
 
+import javax.validation.UnexpectedTypeException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -24,7 +26,7 @@ public class GlobalExceptionHandler {
         return handleExceptionInternal(ex, headers, status, request, apiError);
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, UnexpectedTypeException.class})
     public ResponseEntity handleBindingErrors(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         HttpStatus status = HttpStatus.BAD_REQUEST;
