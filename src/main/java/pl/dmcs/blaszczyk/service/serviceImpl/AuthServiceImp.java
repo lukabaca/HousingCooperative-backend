@@ -88,13 +88,18 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id) {
-        AppUser appUser = getUser(id);
-        if (appUser != null) {
-            appUser.setEmail(registrationRequest.getEmail());
-            Long userId = appUserRepository.saveAndFlush(appUser).getId();
-            return new EntityCreatedResponse(userId);
+        if (registrationRequest == null) {
+            throw new BadRequestException();
         }
-        return null;
+        AppUser appUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found"));
+        appUser.setEmail(registrationRequest.getEmail());
+        appUser.getUserInfo().setName(registrationRequest.getName());
+        appUser.getUserInfo().setSurname(registrationRequest.getSurname());
+        appUser.getUserInfo().setBirthDate(registrationRequest.getBirthDate());
+        Role role = roleRepository.findById(registrationRequest.getRoleId()).orElseThrow(() -> new ResourceNotFoundException());
+        appUser.setRole(role);
+        Long userId = appUserRepository.saveAndFlush(appUser).getId();
+        return new EntityCreatedResponse(userId);
     }
 
     @Override

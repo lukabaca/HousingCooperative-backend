@@ -56,7 +56,7 @@ public class AuthController {
     }
 
     @PutMapping("user/{id}")
-    public ResponseEntity<EntityCreatedResponse> updateUser(@PathVariable Long id, @RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<EntityCreatedResponse> editUser(@PathVariable Long id, @RequestBody RegistrationRequest registrationRequest) {
         EntityCreatedResponse entityCreatedResponse = authService.updateUser(registrationRequest, id);
         if (entityCreatedResponse != null) {
             return  new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
@@ -102,7 +102,7 @@ public class AuthController {
     }
 
     @GetMapping("roles")
-    public ResponseEntity<List<Role>> getRole() {
+    public ResponseEntity<List<Role>> getRoles() {
         List<Role> roles = authService.getRoles();
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
     }
