@@ -24,7 +24,7 @@ public class AppUser implements UserDetails {
     @JsonManagedReference
     private Role role;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Premise> premises;
 
     @OneToOne(cascade = CascadeType.ALL)
