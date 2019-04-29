@@ -48,4 +48,16 @@ public class PremiseController {
         premiseService.deletePremise(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping("addLocatorToPremises/{premisesId}/{locatorId}")
+    public ResponseEntity<?> addLocatorToPremises(@PathVariable Long premisesId, @PathVariable Long locatorId) {
+        premiseService.addLocatorToPremises(premisesId, locatorId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("deleteLocatorFromPremises/{premisesId}/{locatorId}")
+    public ResponseEntity<?> deleteLocatorFromPremises(@PathVariable Long premisesId, @PathVariable Long locatorId) {
+        premiseService.deleteLocatorFromPremises(premisesId, locatorId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

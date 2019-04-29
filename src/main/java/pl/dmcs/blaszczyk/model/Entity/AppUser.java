@@ -24,6 +24,7 @@ public class AppUser implements UserDetails {
     @JsonManagedReference
     private Role role;
 
+    @JsonIgnore
     @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Premise> premises;
 
@@ -117,6 +118,7 @@ public class AppUser implements UserDetails {
         return isActive();
     }
 
+    @JsonIgnore
     public boolean isActive() {
         return isActive;
     }

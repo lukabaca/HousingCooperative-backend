@@ -3,12 +3,14 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Building;
 import pl.dmcs.blaszczyk.model.Entity.Premise;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.PremiseRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
+import pl.dmcs.blaszczyk.repository.AppUserRepository;
 import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.repository.PremiseRepository;
 import pl.dmcs.blaszczyk.service.PremiseService;
@@ -27,6 +29,9 @@ public class PremiseServiceImp implements PremiseService {
 
     @Autowired
     BuildingRepository buildingRepository;
+
+    @Autowired
+    AppUserRepository appUserRepository;
 
     @Override
     public List<Premise> getPremises() {
@@ -55,14 +60,10 @@ public class PremiseServiceImp implements PremiseService {
 
     @Override
     public EntityCreatedResponse updatePremise(Long id, PremiseRequest premiseRequest) {
-        Optional<Premise> optionalPremise = premiseRepository.findById(id);
-        if (!optionalPremise.isPresent()) {
-            throw new ResourceNotFoundException();
-        }
         if (premiseRequest == null) {
             throw new BadRequestException();
         }
-        Premise premise = optionalPremise.get();
+        Premise premise = premiseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("premise not found"));
         premise.setNumber(premiseRequest.getNumber());
         premise.setRoomCount(premiseRequest.getRoomCount());
         premise.setSpace(premiseRequest.getRoomCount());
@@ -72,7 +73,7 @@ public class PremiseServiceImp implements PremiseService {
 
     @Override
     public void deletePremise(Long id) {
-        Premise premise = premiseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
+        Premise premise = premiseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("premise not found"));
         Building building = premise.getBuilding();
         Set<Premise> premises = new HashSet<>(building.getPremises());
         for (Premise premiseTmp: premises) {
@@ -81,5 +82,23 @@ public class PremiseServiceImp implements PremiseService {
             }
         }
         premiseRepository.delete(premise);
+    }
+
+    @Override
+    public void addLocatorToPremises(Long premisesId, Long locatorId) {
+        Premise premise = premiseRepository.findById(premisesId).orElseThrow(() -> new ResourceNotFoundException("Premise not found"));
+        AppUser appUser = appUserRepository.findById(locatorId).orElseThrow(() -> new ResourceNotFoundException("Locator not found"));
+        premise.getAppUser().add(appUser);
+        premiseRepository.saveAndFlush(premise);
+    }
+
+    @Override
+    public void deleteLocatorFromPremises(Long premisesId, Long locatorId) {
+        Premise premise = premiseRepository.findById(premisesId).orElseThrow(() -> new ResourceNotFoundException("Premise not found"));
+        AppUser appUser = appUserRepository.findById(locatorId).orElseThrow(() -> new ResourceNotFoundException("Locator not found"));
+        if (!premise.getAppUser().remove(appUser)) {
+            throw new BadRequestException("This locator doesn't belong to this premise");
+        }
+        premiseRepository.saveAndFlush(premise);
     }
 }
