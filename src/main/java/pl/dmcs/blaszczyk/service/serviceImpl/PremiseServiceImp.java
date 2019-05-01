@@ -101,4 +101,22 @@ public class PremiseServiceImp implements PremiseService {
         }
         premiseRepository.saveAndFlush(premise);
     }
+
+    @Override
+    public Premise getUserPremise(Long userId) {
+        List<Premise> premises = premiseRepository.findAll();
+        for (Premise premise : premises) {
+            if (premise != null) {
+                Set<AppUser> appUsers = premise.getAppUser();
+                for (AppUser appUser : appUsers) {
+                    if (appUser != null) {
+                        if (appUser.getId().equals(userId)) {
+                            return premise;
+                        }
+                    }
+                }
+            }
+        }
+        throw new ResourceNotFoundException("Premise for user not found");
+    }
 }

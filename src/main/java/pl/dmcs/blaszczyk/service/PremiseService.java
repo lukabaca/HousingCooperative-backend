@@ -14,4 +14,5 @@ public interface PremiseService {
     void deletePremise(Long id);
     void addLocatorToPremises(Long premisesId, Long locatorId);
     void deleteLocatorFromPremises(Long premisesId, Long locatorId);
+    Premise getUserPremise(Long userId);
 }

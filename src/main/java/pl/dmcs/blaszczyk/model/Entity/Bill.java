@@ -13,6 +13,24 @@ public class Bill {
     private double coldWaterCost;
     private double heatingCost;
     private boolean isPaid;
+    private boolean isChecked;
+    private boolean isAccepted;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        isAccepted = accepted;
+    }
 
     public boolean isPaid() {
         return isPaid;

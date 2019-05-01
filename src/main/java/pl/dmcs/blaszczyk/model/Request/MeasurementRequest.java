@@ -9,6 +9,15 @@ public class MeasurementRequest {
     private double heating;
     private int month;
     private int year;
+    private Long premisesId;
+
+    public Long getPremisesId() {
+        return premisesId;
+    }
+
+    public void setPremisesId(Long premisesId) {
+        this.premisesId = premisesId;
+    }
 
     public int getMonth() {
         return month;

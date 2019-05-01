@@ -17,6 +17,6 @@ public class MeasurementCostServiceImp implements MeasurementCostService {
 
     @Override
     public MeasurementCost getMeasurementsCosts() {
-        return measurementCostRepository.findById(Long.valueOf(1)).orElseThrow(() -> new ResourceNotFoundException());
+        return measurementCostRepository.findById(Long.valueOf(1)).orElseThrow(() -> new ResourceNotFoundException("measurements costs not found"));
     }
 }
