@@ -8,6 +8,7 @@ import pl.dmcs.blaszczyk.model.Entity.Measurement;
 import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
+import pl.dmcs.blaszczyk.model.Request.BillRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BillRepository;
@@ -25,12 +26,12 @@ public class BillServiceImp implements BillService {
 
     @Override
     public Bill getBill(Long id) {
-        return null;
+        return billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
     }
 
     @Override
     public List<Bill> getBills() {
-        return null;
+        return billRepository.findAll();
     }
 
     @Override
@@ -48,6 +49,9 @@ public class BillServiceImp implements BillService {
             throw new BadRequestException();
         }
         Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
+        if (bill.isPaid()) {
+            throw new BadRequestException("Bill is already paid");
+        }
         bill.setPaid(billStatusRequest.isPaid());
         Long billId = billRepository.saveAndFlush(bill).getId();
         return new EntityCreatedResponse(billId);
@@ -75,6 +79,22 @@ public class BillServiceImp implements BillService {
         bill.setHotWaterCost(measurement.getHotWater() * measurementCost.getHotWaterCost());
         bill.setElectricityCost(measurement.getElectricity() * measurementCost.getElectricityCost());
         bill.setHeatingCost(measurement.getHeating() * measurementCost.getHeatingCost());
+        bill.setChecked(false);
         return bill;
+    }
+
+    @Override
+    public EntityCreatedResponse updateBill(BillRequest billRequest, Long id) {
+        if (billRequest == null) {
+            throw new BadRequestException();
+        }
+        Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Bill not found"));
+        bill.setHeatingCost(billRequest.getHeatingCost());
+        bill.setElectricityCost(billRequest.getElectricityCost());
+        bill.setColdWaterCost(billRequest.getColdWaterCost());
+        bill.setHotWaterCost(billRequest.getHotWaterCost());
+        bill.setChecked(false);
+        Long billId = billRepository.saveAndFlush(bill).getId();
+        return new EntityCreatedResponse(billId);
     }
 }
