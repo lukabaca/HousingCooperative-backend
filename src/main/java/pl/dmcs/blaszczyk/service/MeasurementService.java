@@ -13,4 +13,5 @@ public interface MeasurementService {
     EntityCreatedResponse createMeasurement(MeasurementRequest measurementRequest);
     EntityCreatedResponse updateMeasurement(Long id, MeasurementRequest measurementRequest);
     EntityCreatedResponse changeMeasurementStatus(Long id, MeasurementStatusRequest measurementStatusRequest);
+    List<Measurement> getUserMeasurements(Long userId);
 }

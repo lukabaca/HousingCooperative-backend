@@ -3,10 +3,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.dmcs.blaszczyk.model.Entity.Bill;
-import pl.dmcs.blaszczyk.model.Entity.Measurement;
-import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
-import pl.dmcs.blaszczyk.model.Entity.Premise;
+import pl.dmcs.blaszczyk.model.Entity.*;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Exception.WrongMeasurementDateException;
@@ -22,6 +19,7 @@ import pl.dmcs.blaszczyk.service.PremiseService;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -133,5 +131,24 @@ public class MeasurementServiceImp implements MeasurementService {
         }
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
         return new EntityCreatedResponse(measurementId);
+    }
+
+    @Override
+    public List<Measurement> getUserMeasurements(Long userId) {
+        List<Measurement> measurements = measurementRepository.findAll();
+        List<Measurement> userMeasurements = new ArrayList<>();
+        for (Measurement measurement: measurements) {
+            if (measurement != null) {
+                Premise premise = measurement.getPremise();
+                if (premise != null) {
+                    for (AppUser appUser: premise.getAppUser()) {
+                        if (userId.equals(appUser.getId())) {
+                            userMeasurements.add(measurement);
+                        }
+                    }
+                }
+            }
+        }
+        return userMeasurements;
     }
 }
