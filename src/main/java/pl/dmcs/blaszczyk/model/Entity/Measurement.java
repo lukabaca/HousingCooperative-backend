@@ -1,5 +1,7 @@
 package pl.dmcs.blaszczyk.model.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity(name="Measurement")
@@ -17,6 +19,18 @@ public class Measurement {
     private boolean isChecked;
     private int month;
     private int year;
+
+    @ManyToOne
+    @JsonManagedReference
+    private Premise premise;
+
+    public Premise getPremise() {
+        return premise;
+    }
+
+    public void setPremise(Premise premise) {
+        this.premise = premise;
+    }
 
     public Long getId() {
         return id;

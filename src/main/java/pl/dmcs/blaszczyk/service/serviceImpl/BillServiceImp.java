@@ -3,9 +3,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.dmcs.blaszczyk.model.Entity.Bill;
-import pl.dmcs.blaszczyk.model.Entity.Measurement;
-import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
+import pl.dmcs.blaszczyk.model.Entity.*;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.BillAlreadyPaidException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
@@ -16,6 +14,7 @@ import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BillRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -112,5 +111,27 @@ public class BillServiceImp implements BillService {
         bill.setChecked(true);
         Long billId = billRepository.saveAndFlush(bill).getId();
         return new EntityCreatedResponse(billId);
+    }
+
+    @Override
+    public List<Bill> getUserBills(Long userId) {
+        List<Bill> bills = billRepository.findAll();
+        List<Bill> userBills = new ArrayList<>();
+        for (Bill bill: bills) {
+            if (bill != null) {
+                Measurement measurement = bill.getMeasurement();
+                if (measurement != null) {
+                    Premise premise = measurement.getPremise();
+                    if (premise != null) {
+                        for (AppUser appUser: premise.getAppUser()) {
+                            if (userId.equals(appUser.getId())) {
+                                userBills.add(bill);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return userBills;
     }
 }

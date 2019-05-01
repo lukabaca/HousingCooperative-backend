@@ -19,4 +19,5 @@ public interface BillService {
     Bill getCalculatedBill(Measurement measurement, MeasurementCost measurementCost);
     EntityCreatedResponse updateBill(BillRequest billRequest, Long id);
     EntityCreatedResponse changeBillStatus(Long id, BillStatusRequest billStatusRequest);
+    List<Bill> getUserBills(Long userId);
 }

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
 import pl.dmcs.blaszczyk.model.Entity.Measurement;
 import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
+import pl.dmcs.blaszczyk.model.Entity.Premise;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Exception.WrongMeasurementDateException;
@@ -17,6 +18,7 @@ import pl.dmcs.blaszczyk.repository.MeasurementRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 import pl.dmcs.blaszczyk.service.MeasurementCostService;
 import pl.dmcs.blaszczyk.service.MeasurementService;
+import pl.dmcs.blaszczyk.service.PremiseService;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,6 +38,9 @@ public class MeasurementServiceImp implements MeasurementService {
     @Autowired
     BillService billService;
 
+    @Autowired
+    PremiseService premiseService;
+
     @Override
     public Measurement getMeasurement(Long id) {
         return measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("measurement is not valid"));
@@ -54,6 +59,7 @@ public class MeasurementServiceImp implements MeasurementService {
         if (!checkIfMeasurementDateIsValid(measurementRequest.getMonth(), measurementRequest.getYear())) {
             throw new WrongMeasurementDateException("wrong measurement date");
         }
+        Premise premise = premiseService.getPremise(measurementRequest.getPremisesId());
         Measurement measurement = new Measurement();
         measurement.setColdWater(measurementRequest.getColdWater());
         measurement.setHotWater(measurementRequest.getHotWater());
@@ -62,6 +68,7 @@ public class MeasurementServiceImp implements MeasurementService {
         measurement.setYear(measurementRequest.getYear());
         measurement.setMonth(measurementRequest.getMonth());
         measurement.setChecked(false);
+        measurement.setPremise(premise);
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
         return new EntityCreatedResponse(measurementId);
     }
