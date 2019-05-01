@@ -7,15 +7,16 @@ import pl.dmcs.blaszczyk.model.Entity.Bill;
 import pl.dmcs.blaszczyk.model.Entity.Measurement;
 import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
+import pl.dmcs.blaszczyk.model.Exception.BillAlreadyPaidException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BillRequest;
+import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BillRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -44,15 +45,18 @@ public class BillServiceImp implements BillService {
     }
 
     @Override
-    public EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest, Long id) {
-        if (billStatusRequest == null) {
+    public EntityCreatedResponse changeBillPaymentStatus(BillPaymentStatusRequest billPaymentStatusRequest, Long id) {
+        if (billPaymentStatusRequest == null) {
             throw new BadRequestException();
         }
         Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
-        if (bill.isPaid()) {
-            throw new BadRequestException("Bill is already paid");
+        if (!bill.isAccepted()) {
+            throw new BadRequestException("Cant change payment status of not accepted bill");
         }
-        bill.setPaid(billStatusRequest.isPaid());
+        if (bill.isPaid()) {
+            throw new BillAlreadyPaidException("Bill is already paid");
+        }
+        bill.setPaid(billPaymentStatusRequest.isPaid());
         Long billId = billRepository.saveAndFlush(bill).getId();
         return new EntityCreatedResponse(billId);
     }
@@ -94,6 +98,18 @@ public class BillServiceImp implements BillService {
         bill.setColdWaterCost(billRequest.getColdWaterCost());
         bill.setHotWaterCost(billRequest.getHotWaterCost());
         bill.setChecked(false);
+        Long billId = billRepository.saveAndFlush(bill).getId();
+        return new EntityCreatedResponse(billId);
+    }
+
+    @Override
+    public EntityCreatedResponse changeBillStatus(Long id, BillStatusRequest billStatusRequest) {
+        if (billStatusRequest == null) {
+            throw new BadRequestException();
+        }
+        Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Bill not found"));
+        bill.setAccepted(billStatusRequest.isAccepted());
+        bill.setChecked(true);
         Long billId = billRepository.saveAndFlush(bill).getId();
         return new EntityCreatedResponse(billId);
     }

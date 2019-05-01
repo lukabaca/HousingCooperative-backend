@@ -3,18 +3,17 @@ package pl.dmcs.blaszczyk.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
+import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
-import pl.dmcs.blaszczyk.repository.BillRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("bill")
 public class BillController {
 
     @Autowired
@@ -32,10 +31,15 @@ public class BillController {
         return new ResponseEntity<Bill>(bill, HttpStatus.OK);
     }
 
-    @PutMapping("changeBillStatus/{id}")
-    public ResponseEntity<EntityCreatedResponse> changeBillStatus(Long billId, BillStatusRequest billStatusRequest) {
-        EntityCreatedResponse response = billService.changeBillPaymentStatus(billStatusRequest, billId);
+    @PutMapping("changeBillPaymentStatus/{id}")
+    public ResponseEntity<EntityCreatedResponse> changeBillPaymentStatus(@PathVariable Long id, @RequestBody BillPaymentStatusRequest billPaymentStatusRequest) {
+        EntityCreatedResponse response = billService.changeBillPaymentStatus(billPaymentStatusRequest, id);
         return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
     }
 
+    @PutMapping("changeBillStatus/{id}")
+    public ResponseEntity<EntityCreatedResponse> changeBillStatus(@PathVariable Long id, @RequestBody BillStatusRequest billStatusRequest) {
+        EntityCreatedResponse response = billService.changeBillStatus(id, billStatusRequest);
+        return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
+    }
 }

@@ -13,7 +13,8 @@ import pl.dmcs.blaszczyk.service.MeasurementService;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController("measurement")
+@RestController
+@RequestMapping("measurement")
 public class MeasurementController {
 
     @Autowired
