@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
+import pl.dmcs.blaszczyk.model.Entity.Measurement;
+import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
@@ -41,8 +43,14 @@ public class BillServiceImp implements BillService {
     }
 
     @Override
-    public EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest) {
-        return null;
+    public EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest, Long id) {
+        if (billStatusRequest == null) {
+            throw new BadRequestException();
+        }
+        Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
+        bill.setPaid(billStatusRequest.isPaid());
+        Long billId = billRepository.saveAndFlush(bill).getId();
+        return new EntityCreatedResponse(billId);
     }
 
     @Override
@@ -54,5 +62,19 @@ public class BillServiceImp implements BillService {
            }
        }
        throw new ResourceNotFoundException();
+    }
+
+    @Override
+    public Bill getCalculatedBill(Measurement measurement, MeasurementCost measurementCost) {
+        if (measurement == null || measurementCost == null) {
+            return null;
+        }
+        Bill bill = new Bill();
+        bill.setMeasurement(measurement);
+        bill.setColdWaterCost(measurement.getColdWater() * measurementCost.getColdWaterCost());
+        bill.setHotWaterCost(measurement.getHotWater() * measurementCost.getHotWaterCost());
+        bill.setElectricityCost(measurement.getElectricity() * measurementCost.getElectricityCost());
+        bill.setHeatingCost(measurement.getHeating() * measurementCost.getHeatingCost());
+        return bill;
     }
 }

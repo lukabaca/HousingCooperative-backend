@@ -14,6 +14,7 @@ public class Measurement {
     private double coldWater;
     private double heating;
     private boolean isAccepted;
+    private boolean isChecked;
     private int month;
     private int year;
 
@@ -81,5 +82,12 @@ public class Measurement {
         this.month = month;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 }
 

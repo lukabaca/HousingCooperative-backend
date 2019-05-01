@@ -1,6 +1,8 @@
 package pl.dmcs.blaszczyk.service;
 
 import pl.dmcs.blaszczyk.model.Entity.Bill;
+import pl.dmcs.blaszczyk.model.Entity.Measurement;
+import pl.dmcs.blaszczyk.model.Entity.MeasurementCost;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 
@@ -10,6 +12,7 @@ public interface BillService {
     Bill getBill(Long id);
     List<Bill> getBills();
     EntityCreatedResponse createBill(Bill bill);
-    EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest);
+    EntityCreatedResponse changeBillPaymentStatus(BillStatusRequest billStatusRequest, Long id);
     Bill findBillByMeasurementId(Long measurementId);
+    Bill getCalculatedBill(Measurement measurement, MeasurementCost measurementCost);
 }

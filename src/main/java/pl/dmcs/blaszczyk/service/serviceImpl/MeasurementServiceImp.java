@@ -38,7 +38,7 @@ public class MeasurementServiceImp implements MeasurementService {
 
     @Override
     public Measurement getMeasurement(Long id) {
-        return measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
+        return measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("measurement is not valid"));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MeasurementServiceImp implements MeasurementService {
             throw new BadRequestException();
         }
         if (!checkIfMeasurementDateIsValid(measurementRequest.getMonth(), measurementRequest.getYear())) {
-            throw new WrongMeasurementDateException();
+            throw new WrongMeasurementDateException("wrong measurement date");
         }
         Measurement measurement = new Measurement();
         measurement.setColdWater(measurementRequest.getColdWater());
@@ -61,12 +61,8 @@ public class MeasurementServiceImp implements MeasurementService {
         measurement.setHeating(measurementRequest.getHeating());
         measurement.setYear(measurementRequest.getYear());
         measurement.setMonth(measurementRequest.getMonth());
+        measurement.setChecked(false);
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
-        MeasurementCost measurementCost = measurementCostService.getMeasurementsCosts();
-        Bill bill = new Bill();
-        bill = this.getCalculatedBill(measurement, measurementCost, bill);
-        bill.setMeasurement(measurement);
-        billService.createBill(bill);
         return new EntityCreatedResponse(measurementId);
     }
 
@@ -75,25 +71,17 @@ public class MeasurementServiceImp implements MeasurementService {
         LocalDate localDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int currentYear = localDate.getYear();
         int currentMonth = localDate.getMonthValue();
-        if ((measurementYear < (currentYear - 1)) || (measurementYear > currentYear)) {
+        if (measurementYear > currentYear) {
             return false;
-        }
-        if ((currentYear == measurementYear) && (measuerementMonth >= currentMonth)) {
+        } else if (measurementYear == currentYear && measuerementMonth >= currentMonth) {
             return false;
+        } else if (measuerementMonth < 1 || measuerementMonth > 12) {
+            return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
-    private Bill getCalculatedBill(Measurement measurement, MeasurementCost measurementCost, Bill bill) {
-        if (measurement == null || measurementCost == null) {
-            return null;
-        }
-        bill.setColdWaterCost(measurement.getColdWater() * measurementCost.getColdWaterCost());
-        bill.setHotWaterCost(measurement.getHotWater() * measurementCost.getHotWaterCost());
-        bill.setElectricityCost(measurement.getElectricity() * measurementCost.getElectricityCost());
-        bill.setHeatingCost(measurement.getHeating() * measurementCost.getHeatingCost());
-        return bill;
-    }
 
     @Override
     public EntityCreatedResponse updateMeasurement(Long id, MeasurementRequest measurementRequest) {
@@ -101,28 +89,25 @@ public class MeasurementServiceImp implements MeasurementService {
             throw new BadRequestException();
         }
         if (!canUpdateMeasurement(id)) {
-            throw new BadRequestException();
+            throw new BadRequestException("Measurement is already accepted, you can't update it");
         }
         if (!checkIfMeasurementDateIsValid(measurementRequest.getMonth(), measurementRequest.getYear())) {
-            throw new WrongMeasurementDateException();
+            throw new WrongMeasurementDateException("wrong measurement date provided");
         }
-        Measurement measurement = measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
-        Bill bill = billService.findBillByMeasurementId(measurement.getId());
+        Measurement measurement = measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Measurement not found"));
         measurement.setColdWater(measurementRequest.getColdWater());
         measurement.setHotWater(measurementRequest.getHotWater());
         measurement.setElectricity(measurementRequest.getElectricity());
         measurement.setHeating(measurementRequest.getHeating());
         measurement.setYear(measurementRequest.getYear());
         measurement.setMonth(measurementRequest.getMonth());
+        measurement.setChecked(false);
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
-        MeasurementCost measurementCost = measurementCostService.getMeasurementsCosts();
-        bill = getCalculatedBill(measurement, measurementCost, bill);
-        billService.createBill(bill);
         return new EntityCreatedResponse(id);
     }
 
     private boolean canUpdateMeasurement(Long measurementId) {
-        Measurement measurement = measurementRepository.findById(measurementId).orElseThrow(() -> new ResourceNotFoundException());
+        Measurement measurement = measurementRepository.findById(measurementId).orElseThrow(() -> new ResourceNotFoundException("measurement not found"));
         return !measurement.isAccepted();
     }
 
@@ -131,8 +116,14 @@ public class MeasurementServiceImp implements MeasurementService {
         if (measurementStatusRequest == null) {
             throw new BadRequestException();
         }
-        Measurement measurement = measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
+        Measurement measurement = measurementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("measurement not found"));
         measurement.setAccepted(measurementStatusRequest.isAccepted());
+        measurement.setChecked(true);
+        if (measurement.isAccepted()) {
+            MeasurementCost measurementCost = measurementCostService.getMeasurementsCosts();
+            Bill bill = billService.getCalculatedBill(measurement, measurementCost);
+            billService.createBill(bill);
+        }
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
         return new EntityCreatedResponse(measurementId);
     }
