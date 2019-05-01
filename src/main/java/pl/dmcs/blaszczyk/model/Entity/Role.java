@@ -9,6 +9,7 @@ import java.util.List;
 public class Role {
     @Id
     private Long id;
+    private String value;
     private String name;
 
     @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -37,6 +38,14 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
 }

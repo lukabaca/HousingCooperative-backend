@@ -2,6 +2,7 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class BillServiceImp implements BillService {
 
     @Autowired

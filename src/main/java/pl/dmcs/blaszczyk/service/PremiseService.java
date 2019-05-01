@@ -12,4 +12,6 @@ public interface PremiseService {
     EntityCreatedResponse createPremise(PremiseRequest premiseRequest);
     EntityCreatedResponse updatePremise(Long id, PremiseRequest premiseRequest);
     void deletePremise(Long id);
+    void addLocatorToPremises(Long premisesId, Long locatorId);
+    void deleteLocatorFromPremises(Long premisesId, Long locatorId);
 }

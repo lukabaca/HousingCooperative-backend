@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ServerException;
 import pl.dmcs.blaszczyk.service.MailingService;
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 @PropertySource("classpath:mail.properties")
 @Service
+@Transactional
 public class MailingServiceImp implements MailingService {
 
     @Autowired

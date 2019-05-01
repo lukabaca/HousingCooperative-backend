@@ -1,6 +1,7 @@
 package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.ActivationToken;
 import pl.dmcs.blaszczyk.model.Entity.Role;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
 public class AuthServiceImp implements AuthService {
 
     @Autowired
@@ -86,13 +88,18 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id) {
-        AppUser appUser = getUser(id);
-        if (appUser != null) {
-            appUser.setEmail(registrationRequest.getEmail());
-            Long userId = appUserRepository.saveAndFlush(appUser).getId();
-            return new EntityCreatedResponse(userId);
+        if (registrationRequest == null) {
+            throw new BadRequestException();
         }
-        return null;
+        AppUser appUser = appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found"));
+        appUser.setEmail(registrationRequest.getEmail());
+        appUser.getUserInfo().setName(registrationRequest.getName());
+        appUser.getUserInfo().setSurname(registrationRequest.getSurname());
+        appUser.getUserInfo().setBirthDate(registrationRequest.getBirthDate());
+        Role role = roleRepository.findById(registrationRequest.getRoleId()).orElseThrow(() -> new ResourceNotFoundException());
+        appUser.setRole(role);
+        Long userId = appUserRepository.saveAndFlush(appUser).getId();
+        return new EntityCreatedResponse(userId);
     }
 
     @Override

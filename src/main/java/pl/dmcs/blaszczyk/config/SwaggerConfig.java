@@ -32,7 +32,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("API do Javy EE")
-                .description("Łukasz Błaszczyk")
+                .description("Lukasz BLaszczyk")
                 .version("VERSION")
                 .termsOfServiceUrl("http://terms-of-services.url")
                 .license("LICENSE")

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -55,7 +56,7 @@ public class AuthController {
     }
 
     @PutMapping("user/{id}")
-    public ResponseEntity<EntityCreatedResponse> updateUser(@PathVariable Long id, @RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<EntityCreatedResponse> editUser(@PathVariable Long id, @RequestBody RegistrationRequest registrationRequest) {
         EntityCreatedResponse entityCreatedResponse = authService.updateUser(registrationRequest, id);
         if (entityCreatedResponse != null) {
             return  new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
@@ -70,7 +71,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<EntityCreatedResponse> newUser(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<EntityCreatedResponse> newUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         EntityCreatedResponse entityCreatedResponse = authService.save(registrationRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
@@ -101,7 +102,7 @@ public class AuthController {
     }
 
     @GetMapping("roles")
-    public ResponseEntity<List<Role>> getRole() {
+    public ResponseEntity<List<Role>> getRoles() {
         List<Role> roles = authService.getRoles();
         return new ResponseEntity<List<Role>>(roles, HttpStatus.OK);
     }

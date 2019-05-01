@@ -1,8 +1,14 @@
 package pl.dmcs.blaszczyk.model.Request;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+
 public class BuildingRequest {
+
     private int number;
+    @NotBlank
     private String address;
+    @NotBlank
     private String city;
 
     public int getNumber() {
