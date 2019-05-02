@@ -18,7 +18,7 @@ import javax.validation.UnexpectedTypeException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ ResourceNotFoundException.class, BadRequestException.class, ActivationTokenExpiredException.class, ServerException.class, UserAlreadyExistException.class,
-    WrongMeasurementDateException.class})
+    WrongMeasurementDateException.class, ResourceForbiddenException.class})
     public final ResponseEntity<?> handleException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         ApiError apiError = new ApiError(ex.getMessage());
@@ -56,7 +56,10 @@ public class GlobalExceptionHandler {
             status = HttpStatus.CONFLICT;
         } else if (ex instanceof WrongMeasurementDateException) {
             status = HttpStatus.BAD_REQUEST;
-        } else {
+        }
+        else if (ex instanceof ResourceForbiddenException) {
+            status = HttpStatus.FORBIDDEN;
+        }else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return status;

@@ -1,11 +1,14 @@
 package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.*;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.BillAlreadyPaidException;
+import pl.dmcs.blaszczyk.model.Exception.ResourceForbiddenException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BillRequest;
 import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
@@ -26,6 +29,27 @@ public class BillServiceImp implements BillService {
 
     @Override
     public Bill getBill(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        boolean isResourceForbidden = true;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof AppUser) {
+            if (hasUserRole) {
+                Bill bill = billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
+                AppUser currentlyLoggedUser = (AppUser) principal;
+                Measurement measurement = bill.getMeasurement();
+                Premise premise = measurement.getPremise();
+                for (AppUser appUser : premise.getAppUser()) {
+                    if (appUser.getId().equals(currentlyLoggedUser.getId())) {
+                        isResourceForbidden = false;
+                        break;
+                    }
+                }
+                if (isResourceForbidden) {
+                    throw new ResourceForbiddenException("You can't watch other person bill");
+                }
+            }
+        }
         return billRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("bill not found"));
     }
 

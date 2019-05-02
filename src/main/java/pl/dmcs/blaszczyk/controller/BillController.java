@@ -60,7 +60,7 @@ public class BillController {
     @GetMapping("getUserBills")
     public ResponseEntity<List<Bill>> getUserBills(HttpServletRequest request) {
         String token = tokenProvider.getJwtFromRequest(request);
-        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+        if (tokenProvider.validateToken(token)) {
             Long userId = tokenProvider.getUserIdFromJWT(token);
             List<Bill> userBills = billService.getUserBills(userId);
             return new ResponseEntity<List<Bill>>(userBills, HttpStatus.OK);
