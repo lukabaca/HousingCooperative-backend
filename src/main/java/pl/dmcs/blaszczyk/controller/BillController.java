@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
 import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
+import pl.dmcs.blaszczyk.model.Request.BillRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.security.JWTTokenProvider;
@@ -36,6 +37,12 @@ public class BillController {
     public ResponseEntity<Bill> getBill(@PathVariable Long id) {
         Bill bill = billService.getBill(id);
         return new ResponseEntity<Bill>(bill, HttpStatus.OK);
+    }
+
+    @PutMapping("bill/{id}")
+    public ResponseEntity<EntityCreatedResponse> updateBill(@PathVariable Long id, @RequestBody BillRequest billRequest) {
+        EntityCreatedResponse response = billService.updateBill(billRequest, id);
+        return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("changeBillPaymentStatus/{id}")
