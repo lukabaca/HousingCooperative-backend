@@ -18,7 +18,7 @@ import javax.validation.UnexpectedTypeException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ ResourceNotFoundException.class, BadRequestException.class, ActivationTokenExpiredException.class, ServerException.class, UserAlreadyExistException.class,
-    WrongMeasurementDateException.class, ResourceForbiddenException.class})
+    WrongMeasurementDateException.class, ResourceForbiddenException.class, MeasurementAlreadySubmittedException.class})
     public final ResponseEntity<?> handleException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
         ApiError apiError = new ApiError(ex.getMessage());
@@ -35,11 +35,11 @@ public class GlobalExceptionHandler {
         return handleExceptionInternal(ex, headers, status, request, apiError);
     }
 
-    protected ResponseEntity<?> handleExceptionInternal(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, ApiError body) {
+    protected ResponseEntity<ApiError> handleExceptionInternal(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, ApiError body) {
         if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
             request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, ex, WebRequest.SCOPE_REQUEST);
         }
-        return new ResponseEntity<>(body, headers, status);
+        return new ResponseEntity<ApiError>(body, headers, status);
     }
 
     private HttpStatus getHttpStatusByExceptionType(Exception ex) {
@@ -56,10 +56,11 @@ public class GlobalExceptionHandler {
             status = HttpStatus.CONFLICT;
         } else if (ex instanceof WrongMeasurementDateException) {
             status = HttpStatus.BAD_REQUEST;
-        }
-        else if (ex instanceof ResourceForbiddenException) {
+        } else if (ex instanceof ResourceForbiddenException) {
             status = HttpStatus.FORBIDDEN;
-        }else {
+        } else if (ex instanceof MeasurementAlreadySubmittedException) {
+            status = HttpStatus.CONFLICT;
+        } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return status;
