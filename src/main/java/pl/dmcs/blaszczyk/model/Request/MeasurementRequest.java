@@ -1,22 +1,51 @@
 package pl.dmcs.blaszczyk.model.Request;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 public class MeasurementRequest {
-    private double electricity;
-    private double hotWater;
-    private double coldWater;
-    private double heating;
+    @Positive
+    private Double electricity;
+    @Positive
+    private Double hotWater;
+    @Positive
+    private Double coldWater;
+    @Positive
+    private Double heating;
     private int month;
     private int year;
     private Long premisesId;
 
-    public Long getPremisesId() {
-        return premisesId;
+    public Double getElectricity() {
+        return electricity;
     }
 
-    public void setPremisesId(Long premisesId) {
-        this.premisesId = premisesId;
+    public void setElectricity(Double electricity) {
+        this.electricity = electricity;
+    }
+
+    public Double getHotWater() {
+        return hotWater;
+    }
+
+    public void setHotWater(Double hotWater) {
+        this.hotWater = hotWater;
+    }
+
+    public Double getColdWater() {
+        return coldWater;
+    }
+
+    public void setColdWater(Double coldWater) {
+        this.coldWater = coldWater;
+    }
+
+    public Double getHeating() {
+        return heating;
+    }
+
+    public void setHeating(Double heating) {
+        this.heating = heating;
     }
 
     public int getMonth() {
@@ -35,35 +64,11 @@ public class MeasurementRequest {
         this.year = year;
     }
 
-    public double getElectricity() {
-        return electricity;
+    public Long getPremisesId() {
+        return premisesId;
     }
 
-    public void setElectricity(double electricity) {
-        this.electricity = electricity;
-    }
-
-    public double getHotWater() {
-        return hotWater;
-    }
-
-    public void setHotWater(double hotWater) {
-        this.hotWater = hotWater;
-    }
-
-    public double getColdWater() {
-        return coldWater;
-    }
-
-    public void setColdWater(double coldWater) {
-        this.coldWater = coldWater;
-    }
-
-    public double getHeating() {
-        return heating;
-    }
-
-    public void setHeating(double heating) {
-        this.heating = heating;
+    public void setPremisesId(Long premisesId) {
+        this.premisesId = premisesId;
     }
 }
