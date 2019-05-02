@@ -122,7 +122,7 @@ public class AuthServiceImp implements AuthService {
                 throw new ResourceNotFoundException("App user for token not found");
             }
         } else {
-            throw new ActivationTokenExpiredException();
+            throw new ActivationTokenExpiredException("Token date has expired");
         }
     }
 

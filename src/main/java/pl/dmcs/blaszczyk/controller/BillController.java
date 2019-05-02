@@ -1,7 +1,10 @@
 package pl.dmcs.blaszczyk.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +16,11 @@ import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.security.JWTTokenProvider;
 import pl.dmcs.blaszczyk.service.BillService;
+import pl.dmcs.blaszczyk.util.PdfGenerator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -66,5 +72,19 @@ public class BillController {
             return new ResponseEntity<List<Bill>>(userBills, HttpStatus.OK);
         }
         return new ResponseEntity<List<Bill>>(HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/billPdf/{id}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> billPdf(@PathVariable Long id) throws IOException {
+        Bill bill = billService.getBill(id);
+        ByteArrayInputStream bis = PdfGenerator.billReport(bill);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=bill.pdf");
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
     }
 }
