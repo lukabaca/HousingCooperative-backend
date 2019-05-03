@@ -15,10 +15,12 @@ import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BillRepository;
+import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -26,6 +28,9 @@ public class BillServiceImp implements BillService {
 
     @Autowired
     BillRepository billRepository;
+
+    @Autowired
+    BuildingRepository buildingRepository;
 
     @Override
     public Bill getBill(Long id) {
@@ -55,6 +60,53 @@ public class BillServiceImp implements BillService {
 
     @Override
     public List<Bill> getBills() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasManagerRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
+        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof AppUser) {
+            AppUser currentlyLoggedUser = (AppUser) principal;
+            List<Bill> userBills = new ArrayList<>();
+            List<Bill> bills = billRepository.findAll();
+            if (hasUserRole) {
+                for (Bill bill : bills) {
+                    if (bill != null) {
+                        Measurement measurement = bill.getMeasurement();
+                        if (measurement != null) {
+                            Premise premiseTmp = measurement.getPremise();
+                            if (premiseTmp != null) {
+                                boolean isUserPremise = currentlyLoggedUser.getPremises().stream().anyMatch(p -> p.getId().equals(premiseTmp.getId()));
+                                if (isUserPremise) {
+                                    userBills.add(bill);
+                                }
+                            }
+                        }
+                    }
+                }
+                return userBills;
+            } else if (hasManagerRole) {
+//                List<Bill> billsForManager = new ArrayList<>();
+//                List<Building> buildings = buildingRepository.findAll();
+//                for (Building building : buildings) {
+//                    if (building != null) {
+//                        if (building.getManager() != null && building.getManager().getId().equals(currentlyLoggedUser.getId())) {
+//                            Set<Premise> premises = building.getPremises();
+//                            for (Premise premise : premises) {
+//                                if (premise != null) {
+//                                    List<Measurement> measurements = new ArrayList<>();
+//                                    for (Measurement measurement : measurements) {
+//                                        if (measurement != null) {
+//                                            measurement.getBill();
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                return measurementsForManager;
+            }
+        }
         return billRepository.findAll();
     }
 
@@ -101,7 +153,6 @@ public class BillServiceImp implements BillService {
             return null;
         }
         Bill bill = new Bill();
-        bill.setMeasurement(measurement);
         bill.setColdWaterCost(measurement.getColdWater() * measurementCost.getColdWaterCost());
         bill.setHotWaterCost(measurement.getHotWater() * measurementCost.getHotWaterCost());
         bill.setElectricityCost(measurement.getElectricity() * measurementCost.getElectricityCost());
