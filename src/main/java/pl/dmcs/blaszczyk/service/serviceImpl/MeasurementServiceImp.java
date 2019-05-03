@@ -231,8 +231,7 @@ public class MeasurementServiceImp implements MeasurementService {
         if (measurement.isAccepted()) {
             MeasurementCost measurementCost = measurementCostService.getMeasurementsCosts();
             Bill bill = billService.getCalculatedBill(measurement, measurementCost);
-//            billService.createBill(bill);
-            measurement.setBill(bill);
+            billService.createBill(bill);
         }
         Long measurementId = measurementRepository.saveAndFlush(measurement).getId();
         return new EntityCreatedResponse(measurementId);

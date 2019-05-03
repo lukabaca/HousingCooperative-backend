@@ -84,27 +84,6 @@ public class BillServiceImp implements BillService {
                     }
                 }
                 return userBills;
-            } else if (hasManagerRole) {
-//                List<Bill> billsForManager = new ArrayList<>();
-//                List<Building> buildings = buildingRepository.findAll();
-//                for (Building building : buildings) {
-//                    if (building != null) {
-//                        if (building.getManager() != null && building.getManager().getId().equals(currentlyLoggedUser.getId())) {
-//                            Set<Premise> premises = building.getPremises();
-//                            for (Premise premise : premises) {
-//                                if (premise != null) {
-//                                    List<Measurement> measurements = new ArrayList<>();
-//                                    for (Measurement measurement : measurements) {
-//                                        if (measurement != null) {
-//                                            measurement.getBill();
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                return measurementsForManager;
             }
         }
         return billRepository.findAll();
@@ -153,6 +132,7 @@ public class BillServiceImp implements BillService {
             return null;
         }
         Bill bill = new Bill();
+        bill.setMeasurement(measurement);
         bill.setColdWaterCost(measurement.getColdWater() * measurementCost.getColdWaterCost());
         bill.setHotWaterCost(measurement.getHotWater() * measurementCost.getHotWaterCost());
         bill.setElectricityCost(measurement.getElectricity() * measurementCost.getElectricityCost());
