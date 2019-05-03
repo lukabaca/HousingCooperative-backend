@@ -12,6 +12,7 @@ import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.service.BuildingService;
 import pl.dmcs.blaszczyk.service.HousingCooperativeService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class HousingCooperativeController {
     }
 
     @PostMapping("building")
-    public ResponseEntity<EntityCreatedResponse> createBuilding(@RequestBody BuildingRequest buildingRequest) {
+    public ResponseEntity<EntityCreatedResponse> createBuilding(@Valid @RequestBody BuildingRequest buildingRequest) {
         EntityCreatedResponse entityCreatedResponse = buildingService.createBuilding(buildingRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }

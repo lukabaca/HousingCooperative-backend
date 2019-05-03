@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AuthService {
     EntityCreatedResponse save(RegistrationRequest registrationRequest);
-    List<AppUser> getUsers();
+    List<AppUser> getUsers(Long roleId);
     AppUser getUser(Long id);
     EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id);
     List<Role> getRoles();

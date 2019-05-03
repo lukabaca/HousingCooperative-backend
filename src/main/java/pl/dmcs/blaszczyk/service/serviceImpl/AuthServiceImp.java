@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.dmcs.blaszczyk.service.MailingService;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -73,17 +70,26 @@ public class AuthServiceImp implements AuthService {
     }
 
     @Override
-    public List<AppUser> getUsers() {
-        return appUserRepository.findAll();
+    public List<AppUser> getUsers(Long roleId) {
+        if (roleId == null) {
+            return appUserRepository.findAll();
+        }
+        Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        List<AppUser> users = appUserRepository.findAll();
+        List<AppUser> usersWithRole = new ArrayList<>();
+        for (AppUser appUser : users) {
+            if (appUser != null) {
+                if (appUser.getRole().getId().equals(role.getId())) {
+                    usersWithRole.add(appUser);
+                }
+            }
+        }
+        return usersWithRole;
     }
 
     @Override
     public AppUser getUser(Long id) {
-        Optional<AppUser> appUserOptional = appUserRepository.findById(id);
-        if (appUserOptional.isPresent()) {
-            return appUserOptional.get();
-        }
-        return null;
+        return appUserRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found"));
     }
 
     @Override
@@ -96,7 +102,7 @@ public class AuthServiceImp implements AuthService {
         appUser.getUserInfo().setName(registrationRequest.getName());
         appUser.getUserInfo().setSurname(registrationRequest.getSurname());
         appUser.getUserInfo().setBirthDate(registrationRequest.getBirthDate());
-        Role role = roleRepository.findById(registrationRequest.getRoleId()).orElseThrow(() -> new ResourceNotFoundException());
+        Role role = roleRepository.findById(registrationRequest.getRoleId()).orElseThrow(() -> new ResourceNotFoundException("role not found"));
         appUser.setRole(role);
         Long userId = appUserRepository.saveAndFlush(appUser).getId();
         return new EntityCreatedResponse(userId);

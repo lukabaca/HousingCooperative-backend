@@ -3,12 +3,14 @@ package pl.dmcs.blaszczyk.service.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Entity.Building;
 import pl.dmcs.blaszczyk.model.Entity.HousingCooperative;
 import pl.dmcs.blaszczyk.model.Exception.BadRequestException;
 import pl.dmcs.blaszczyk.model.Exception.ResourceNotFoundException;
 import pl.dmcs.blaszczyk.model.Request.BuildingRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
+import pl.dmcs.blaszczyk.repository.AppUserRepository;
 import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.repository.HousingCooperativeRepository;
 import pl.dmcs.blaszczyk.service.BuildingService;
@@ -21,6 +23,9 @@ public class BuildingServiceImp implements BuildingService {
 
     @Autowired
     BuildingRepository buildingRepository;
+
+    @Autowired
+    AppUserRepository appUserRepository;
 
     @Autowired
     HousingCooperativeRepository housingCooperativeRepository;
@@ -45,6 +50,11 @@ public class BuildingServiceImp implements BuildingService {
         building.setCity(buildingRequest.getCity());
         building.setNumber(buildingRequest.getNumber());
         building.setAddress(buildingRequest.getAddress());
+        Long managerId = buildingRequest.getManagerId();
+        if (managerId != null) {
+            AppUser manager = appUserRepository.findById(managerId).orElse(null);
+            building.setManager(manager);
+        }
         HousingCooperative housingCooperative = this.housingCooperativeRepository.findById(housingCooperativeId).orElseThrow(() -> new ResourceNotFoundException());
         building.setHousingCooperative(housingCooperative);
         Long buildingId = buildingRepository.saveAndFlush(building).getId();
