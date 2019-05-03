@@ -1,19 +1,25 @@
 package pl.dmcs.blaszczyk.model.Request;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 public class MeasurementRequest {
     @Positive
+    @NotNull
     private Double electricity;
     @Positive
+    @NotNull
     private Double hotWater;
     @Positive
+    @NotNull
     private Double coldWater;
     @Positive
+    @NotNull
     private Double heating;
     private int month;
     private int year;
+    @NotNull
     private Long premisesId;
 
     public Double getElectricity() {

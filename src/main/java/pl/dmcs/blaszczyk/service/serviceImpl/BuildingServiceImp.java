@@ -35,9 +35,9 @@ public class BuildingServiceImp implements BuildingService {
     @Override
     public List<Building> getBuildings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
+        boolean hasManagerRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (hasUserRole) {
+        if (hasManagerRole) {
             if (principal instanceof AppUser) {
                 AppUser currentlyLoggedUser = (AppUser) principal;
                 List<Building> buildings = buildingRepository.findAll();
