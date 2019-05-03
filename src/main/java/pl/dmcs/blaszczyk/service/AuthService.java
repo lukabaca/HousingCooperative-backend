@@ -15,4 +15,5 @@ public interface AuthService {
     EntityCreatedResponse updateUser(RegistrationRequest registrationRequest, Long id);
     List<Role> getRoles();
     void activateAccount(ActivationToken activationToken);
+    void sendActivationToken(Long userId);
 }

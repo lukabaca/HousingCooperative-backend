@@ -55,7 +55,7 @@ public class AuthServiceImp implements AuthService {
             appUser.setEmail(registrationRequest.getEmail());
             appUser.setPassword(bCryptPasswordEncoder.encode(registrationRequest.getPassword()));
             Long roleId = registrationRequest.getRoleId();
-            Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException());
+            Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("role not found"));
             appUser.setRole(role);
             UserInfo userInfo = new UserInfo();
             userInfo.setName(registrationRequest.getName());
@@ -63,9 +63,6 @@ public class AuthServiceImp implements AuthService {
             userInfo.setBirthDate(registrationRequest.getBirthDate());
             appUser.setUserInfo(userInfo);
             Long userId = appUserRepository.saveAndFlush(appUser).getId();
-            ActivationToken activationToken = activationTokenService.createActivationTokenForUser(appUser);
-            mailingService.sendMail("lukadmcs@gmail.com", "Title", "Link aktywacyjny do konta: " +
-                    "http://localhost:8080/auth/activateAccount/" + activationToken.getConfirmationToken());
             return new EntityCreatedResponse(userId);
     }
 
@@ -130,6 +127,17 @@ public class AuthServiceImp implements AuthService {
         } else {
             throw new ActivationTokenExpiredException("Token date has expired");
         }
+    }
+
+    @Override
+    public void sendActivationToken(Long userId) {
+        AppUser appUser = appUserRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found"));
+        ActivationToken activationToken = activationTokenService.createActivationTokenForUser();
+        activationToken.setAppUser(appUser);
+        appUser.getActivationTokens().add(activationToken);
+        appUserRepository.save(appUser);
+        mailingService.sendMail("lukadmcs@gmail.com", "Link aktywacyjny do spółdzielni", "Link aktywacyjny do konta: " +
+                "http://localhost:8080/auth/activateAccount/" + activationToken.getConfirmationToken());
     }
 
 }

@@ -113,4 +113,10 @@ public class AuthController {
         authService.activateAccount(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("sendActivationToken/{userId}")
+    public ResponseEntity<?> sendActivationToken(@PathVariable Long userId) {
+        authService.sendActivationToken(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

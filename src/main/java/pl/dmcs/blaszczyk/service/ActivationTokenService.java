@@ -5,6 +5,6 @@ import pl.dmcs.blaszczyk.model.Entity.AppUser;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 
 public interface ActivationTokenService {
-    public ActivationToken createActivationTokenForUser(AppUser appUser);
+    public ActivationToken createActivationTokenForUser();
     public ActivationToken getActivationToken(String activationToken);
 }

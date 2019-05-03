@@ -12,7 +12,7 @@ public class ActivationToken {
     private Date createdDate;
     private Date expirationDate;
 
-    @OneToOne
+    @ManyToOne
     private AppUser appUser;
 
     public Long getId() {

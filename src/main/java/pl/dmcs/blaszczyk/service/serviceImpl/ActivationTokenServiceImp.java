@@ -23,10 +23,7 @@ public class ActivationTokenServiceImp implements ActivationTokenService {
     ActivationTokenRepository activationTokenRepository;
 
     @Override
-    public ActivationToken createActivationTokenForUser(AppUser appUser) {
-        if (appUser == null) {
-            throw new BadRequestException();
-        }
+    public ActivationToken createActivationTokenForUser() {
         ActivationToken confirmationToken = new ActivationToken();
         Date currentDate = new Date();
         confirmationToken.setConfirmationToken(UUID.randomUUID().toString());
@@ -35,8 +32,6 @@ public class ActivationTokenServiceImp implements ActivationTokenService {
         calendar.setTime(currentDate);
         calendar.add(Calendar.DATE, 1);
         confirmationToken.setExpirationDate(calendar.getTime());
-        confirmationToken.setAppUser(appUser);
-        Long activationTokenId = this.activationTokenRepository.saveAndFlush(confirmationToken).getId();
         return confirmationToken;
     }
 
