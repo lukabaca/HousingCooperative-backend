@@ -10,6 +10,7 @@ import pl.dmcs.blaszczyk.model.Exception.*;
 import pl.dmcs.blaszczyk.model.Request.MeasurementRequest;
 import pl.dmcs.blaszczyk.model.Request.MeasurementStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
+import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.repository.MeasurementCostRepository;
 import pl.dmcs.blaszczyk.repository.MeasurementRepository;
 import pl.dmcs.blaszczyk.service.BillService;
@@ -31,6 +32,9 @@ public class MeasurementServiceImp implements MeasurementService {
 
     @Autowired
     MeasurementRepository measurementRepository;
+
+    @Autowired
+    BuildingRepository buildingRepository;
 
     @Autowired
     MeasurementCostService measurementCostService;
@@ -68,6 +72,46 @@ public class MeasurementServiceImp implements MeasurementService {
 
     @Override
     public List<Measurement> getMeasurements() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasManagerRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
+        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof AppUser) {
+            AppUser currentlyLoggedUser = (AppUser) principal;
+            List<Measurement> measurements = measurementRepository.findAll();
+            if (hasUserRole) {
+                List<Measurement> userMeasurements = new ArrayList<>();
+                for (Measurement measurement : measurements) {
+                    if (measurement != null) {
+                        Set<AppUser> usersInPremise = measurement.getPremise().getAppUser();
+                        for (AppUser appUser : usersInPremise) {
+                            if (appUser != null) {
+                                if (appUser.getId().equals(currentlyLoggedUser.getId())) {
+                                    userMeasurements.add(measurement);
+                                }
+                            }
+                        }
+                    }
+                }
+                return userMeasurements;
+            } else if (hasManagerRole) {
+                List<Measurement> measurementsForManager = new ArrayList<>();
+                List<Building> buildings = buildingRepository.findAll();
+                for (Building building : buildings) {
+                    if (building != null) {
+                        if (building.getManager() != null && building.getManager().getId().equals(currentlyLoggedUser.getId())) {
+                            Set<Premise> premises = building.getPremises();
+                            for (Premise premise : premises) {
+                                if (premise != null) {
+                                    measurementsForManager.addAll(premise.getMeasurements());
+                                }
+                            }
+                        }
+                    }
+                }
+                return measurementsForManager;
+            }
+        }
         return measurementRepository.findAll();
     }
 

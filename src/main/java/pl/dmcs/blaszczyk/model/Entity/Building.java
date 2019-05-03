@@ -15,6 +15,9 @@ public class Building {
     private String address;
     private String city;
 
+    @OneToOne
+    private AppUser manager;
+
     @ManyToOne
     @JoinColumn
     @JsonManagedReference
@@ -23,6 +26,14 @@ public class Building {
     @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private Set<Premise> premises;
+
+    public AppUser getManager() {
+        return manager;
+    }
+
+    public void setManager(AppUser manager) {
+        this.manager = manager;
+    }
 
     public Set<Premise> getPremises() {
         return premises;

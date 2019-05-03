@@ -65,8 +65,8 @@ public class AuthController {
     }
 //    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("users")
-    public ResponseEntity<List<AppUser>> getUsers() {
-       List<AppUser> users = authService.getUsers();
+    public ResponseEntity<List<AppUser>> getUsers(@RequestParam(required = false) Long roleId) {
+       List<AppUser> users = authService.getUsers(roleId);
        return new ResponseEntity<List<AppUser>>(users, HttpStatus.OK);
     }
 

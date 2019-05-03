@@ -4,12 +4,12 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 
 public class BuildingRequest {
-
     private int number;
     @NotBlank
     private String address;
     @NotBlank
     private String city;
+    private Long managerId;
 
     public int getNumber() {
         return number;
@@ -33,5 +33,13 @@ public class BuildingRequest {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
     }
 }

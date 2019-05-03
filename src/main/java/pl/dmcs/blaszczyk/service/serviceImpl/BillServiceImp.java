@@ -15,10 +15,12 @@ import pl.dmcs.blaszczyk.model.Request.BillPaymentStatusRequest;
 import pl.dmcs.blaszczyk.model.Request.BillStatusRequest;
 import pl.dmcs.blaszczyk.model.Response.EntityCreatedResponse;
 import pl.dmcs.blaszczyk.repository.BillRepository;
+import pl.dmcs.blaszczyk.repository.BuildingRepository;
 import pl.dmcs.blaszczyk.service.BillService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -26,6 +28,9 @@ public class BillServiceImp implements BillService {
 
     @Autowired
     BillRepository billRepository;
+
+    @Autowired
+    BuildingRepository buildingRepository;
 
     @Override
     public Bill getBill(Long id) {
@@ -55,6 +60,32 @@ public class BillServiceImp implements BillService {
 
     @Override
     public List<Bill> getBills() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasManagerRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
+        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof AppUser) {
+            AppUser currentlyLoggedUser = (AppUser) principal;
+            List<Bill> userBills = new ArrayList<>();
+            List<Bill> bills = billRepository.findAll();
+            if (hasUserRole) {
+                for (Bill bill : bills) {
+                    if (bill != null) {
+                        Measurement measurement = bill.getMeasurement();
+                        if (measurement != null) {
+                            Premise premiseTmp = measurement.getPremise();
+                            if (premiseTmp != null) {
+                                boolean isUserPremise = currentlyLoggedUser.getPremises().stream().anyMatch(p -> p.getId().equals(premiseTmp.getId()));
+                                if (isUserPremise) {
+                                    userBills.add(bill);
+                                }
+                            }
+                        }
+                    }
+                }
+                return userBills;
+            }
+        }
         return billRepository.findAll();
     }
 
