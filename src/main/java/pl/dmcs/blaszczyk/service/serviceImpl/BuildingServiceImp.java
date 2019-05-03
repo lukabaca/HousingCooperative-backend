@@ -1,6 +1,8 @@
 package pl.dmcs.blaszczyk.service.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
@@ -32,6 +34,27 @@ public class BuildingServiceImp implements BuildingService {
 
     @Override
     public List<Building> getBuildings() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean hasUserRole = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_MANAGER"));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (hasUserRole) {
+            if (principal instanceof AppUser) {
+                AppUser currentlyLoggedUser = (AppUser) principal;
+                List<Building> buildings = buildingRepository.findAll();
+                List<Building> managerBuildings = new ArrayList<>();
+                for (Building building : buildings) {
+                    if (building != null) {
+                        AppUser manager = building.getManager();
+                        if (manager != null) {
+                            if (manager.getId().equals(currentlyLoggedUser.getId())) {
+                                managerBuildings.add(building);
+                            }
+                        }
+                    }
+                }
+                return managerBuildings;
+            }
+        }
         return buildingRepository.findAll();
     }
 
