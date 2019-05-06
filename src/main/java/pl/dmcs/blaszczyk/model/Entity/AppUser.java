@@ -24,12 +24,23 @@ public class AppUser implements UserDetails {
     @JsonManagedReference
     private Role role;
 
-    @JsonIgnore
     @ManyToMany(cascade ={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private Set<Premise> premises;
 
     @OneToOne(cascade = CascadeType.ALL)
     private UserInfo userInfo;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ActivationToken> activationTokens;
+
+    public List<ActivationToken> getActivationTokens() {
+        return activationTokens;
+    }
+
+    public void setActivationTokens(List<ActivationToken> activationTokens) {
+        this.activationTokens = activationTokens;
+    }
 
     public UserInfo getUserInfo() {
         return userInfo;
