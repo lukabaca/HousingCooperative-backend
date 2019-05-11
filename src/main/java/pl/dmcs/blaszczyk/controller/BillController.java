@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.AppUser;
@@ -45,24 +46,28 @@ public class BillController {
         return new ResponseEntity<Bill>(bill, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PutMapping("bill/{id}")
     public ResponseEntity<EntityCreatedResponse> updateBill(@PathVariable Long id, @RequestBody BillRequest billRequest) {
         EntityCreatedResponse response = billService.updateBill(billRequest, id);
         return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PutMapping("changeBillPaymentStatus/{id}")
     public ResponseEntity<EntityCreatedResponse> changeBillPaymentStatus(@PathVariable Long id, @RequestBody BillPaymentStatusRequest billPaymentStatusRequest) {
         EntityCreatedResponse response = billService.changeBillPaymentStatus(billPaymentStatusRequest, id);
         return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @PutMapping("changeBillStatus/{id}")
     public ResponseEntity<EntityCreatedResponse> changeBillStatus(@PathVariable Long id, @RequestBody BillStatusRequest billStatusRequest) {
         EntityCreatedResponse response = billService.changeBillStatus(id, billStatusRequest);
         return new ResponseEntity<EntityCreatedResponse>(response, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @GetMapping("getUserBills")
     public ResponseEntity<List<Bill>> getUserBills(HttpServletRequest request) {
         String token = tokenProvider.getJwtFromRequest(request);

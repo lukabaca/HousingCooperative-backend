@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.Bill;
@@ -39,24 +40,28 @@ public class MeasurementController {
         return new ResponseEntity<Measurement>(measurement, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PostMapping("measurement")
     public ResponseEntity<EntityCreatedResponse> createMeasurement(@Valid @RequestBody MeasurementRequest measurementRequest) {
         EntityCreatedResponse entityCreatedResponse = measurementService.createMeasurement(measurementRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PutMapping("measurement/{id}")
     public ResponseEntity<EntityCreatedResponse> updateMeasurement(@PathVariable Long id, @RequestBody MeasurementRequest measurementRequest) {
         EntityCreatedResponse entityCreatedResponse = measurementService.updateMeasurement(id, measurementRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @PutMapping("changeMeasurementStatus/{id}")
     public ResponseEntity<EntityCreatedResponse> changeMeasurementStatus(@PathVariable Long id, @RequestBody MeasurementStatusRequest measurementStatusRequest) {
         EntityCreatedResponse entityCreatedResponse = measurementService.changeMeasurementStatus(id, measurementStatusRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     @GetMapping("getUserMeasurements")
     public ResponseEntity<List<Measurement>> getUserMeasurements(HttpServletRequest request) {
         String token = tokenProvider.getJwtFromRequest(request);
