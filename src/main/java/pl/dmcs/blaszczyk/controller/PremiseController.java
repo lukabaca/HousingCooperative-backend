@@ -3,6 +3,7 @@ package pl.dmcs.blaszczyk.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import pl.dmcs.blaszczyk.model.Entity.Measurement;
@@ -26,12 +27,14 @@ public class PremiseController {
     @Autowired
     JWTTokenProvider tokenProvider;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @GetMapping("premises")
     public ResponseEntity<List<Premise>> getPremises() {
         List<Premise> premises = premiseService.getPremises();
         return new ResponseEntity<List<Premise>>(premises, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("premise")
     public ResponseEntity<EntityCreatedResponse> createPremise(@RequestBody PremiseRequest premiseRequest) {
         EntityCreatedResponse entityCreatedResponse = premiseService.createPremise(premiseRequest);
@@ -39,29 +42,33 @@ public class PremiseController {
     }
 
     @GetMapping("premise/{id}")
-    public ResponseEntity<Premise> createPremise(@RequestParam Long id) {
+    public ResponseEntity<Premise> getPremise(@RequestParam Long id) {
         Premise premise = premiseService.getPremise(id);
         return new ResponseEntity<Premise>(premise, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("premise/{id}")
     public ResponseEntity<EntityCreatedResponse> updatePremise(@RequestParam Long id, @RequestBody PremiseRequest premiseRequest) {
         EntityCreatedResponse entityCreatedResponse = premiseService.updatePremise(id, premiseRequest);
         return new ResponseEntity<EntityCreatedResponse>(entityCreatedResponse, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("premise/{id}")
     public ResponseEntity<?> deletePremise(@RequestParam Long id) {
         premiseService.deletePremise(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @PutMapping("addLocatorToPremises/{premisesId}/{locatorId}")
     public ResponseEntity<?> addLocatorToPremises(@PathVariable Long premisesId, @PathVariable Long locatorId) {
         premiseService.addLocatorToPremises(premisesId, locatorId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @DeleteMapping("deleteLocatorFromPremises/{premisesId}/{locatorId}")
     public ResponseEntity<?> deleteLocatorFromPremises(@PathVariable Long premisesId, @PathVariable Long locatorId) {
         premiseService.deleteLocatorFromPremises(premisesId, locatorId);

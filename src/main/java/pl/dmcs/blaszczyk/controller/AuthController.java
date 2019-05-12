@@ -55,6 +55,7 @@ public class AuthController {
         return new ResponseEntity<AppUser>(HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PutMapping("user/{id}")
     public ResponseEntity<EntityCreatedResponse> editUser(@PathVariable Long id, @RequestBody RegistrationRequest registrationRequest) {
         EntityCreatedResponse entityCreatedResponse = authService.updateUser(registrationRequest, id);
@@ -63,13 +64,15 @@ public class AuthController {
         }
         return new ResponseEntity<EntityCreatedResponse>(HttpStatus.NOT_FOUND);
     }
-//    @PreAuthorize("hasRole('ROLE_USER')")
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("users")
     public ResponseEntity<List<AppUser>> getUsers(@RequestParam(required = false) Long roleId) {
        List<AppUser> users = authService.getUsers(roleId);
        return new ResponseEntity<List<AppUser>>(users, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("register")
     public ResponseEntity<EntityCreatedResponse> newUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         EntityCreatedResponse entityCreatedResponse = authService.save(registrationRequest);
@@ -101,6 +104,7 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("roles")
     public ResponseEntity<List<Role>> getRoles() {
         List<Role> roles = authService.getRoles();
@@ -114,6 +118,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("sendActivationToken/{userId}")
     public ResponseEntity<?> sendActivationToken(@PathVariable Long userId) {
         authService.sendActivationToken(userId);

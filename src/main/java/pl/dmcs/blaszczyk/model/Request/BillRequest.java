@@ -1,9 +1,20 @@
 package pl.dmcs.blaszczyk.model.Request;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+
 public class BillRequest {
+    @Positive
+    @NotNull
     private double electricityCost;
+    @Positive
+    @NotNull
     private double hotWaterCost;
+    @Positive
+    @NotNull
     private double coldWaterCost;
+    @Positive
+    @NotNull
     private double heatingCost;
 
     public double getElectricityCost() {
