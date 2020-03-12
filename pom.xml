@@ -29,7 +29,7 @@
         <mySqlVersion>5.1.47</mySqlVersion>
         <javaxServletVersion>3.0.1</javaxServletVersion>
         <hibernateVersion>5.4.0.Final</hibernateVersion>
-        <springDataJPAVersion>2.1.4.RELEASE</springDataJPAVersion>
+        <springDataJPAVersion>2.1.9.RELEASE</springDataJPAVersion>
         <jsonWebTokenVersion>0.3</jsonWebTokenVersion>
         <swaggerVersion>2.6.1</swaggerVersion>
         <slf4jVersion>1.7.25</slf4jVersion>
