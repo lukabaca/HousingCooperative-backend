@@ -8,3 +8,4 @@ webservice.iml
 /build
 /local.properties
 target/*
+out/*
