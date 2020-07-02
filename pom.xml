@@ -26,7 +26,7 @@
         <jacksonVersion>2.9.4</jacksonVersion>
         <junitVersion>3.8.1</junitVersion>
         <javaxValidationVersion>2.0.1.Final</javaxValidationVersion>
-        <mySqlVersion>5.1.47</mySqlVersion>
+        <mySqlVersion>8.0.16</mySqlVersion>
         <javaxServletVersion>3.0.1</javaxServletVersion>
         <hibernateVersion>5.4.0.Final</hibernateVersion>
         <springDataJPAVersion>2.1.4.RELEASE</springDataJPAVersion>
