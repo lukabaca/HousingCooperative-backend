@@ -22,7 +22,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <springVersion>5.0.4.RELEASE</springVersion>
+        <springVersion>5.5.7</springVersion>
         <jacksonVersion>2.9.4</jacksonVersion>
         <junitVersion>3.8.1</junitVersion>
         <javaxValidationVersion>2.0.1.Final</javaxValidationVersion>
