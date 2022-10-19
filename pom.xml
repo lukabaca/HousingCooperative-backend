@@ -23,7 +23,7 @@
 
     <properties>
         <springVersion>5.0.4.RELEASE</springVersion>
-        <jacksonVersion>2.9.4</jacksonVersion>
+        <jacksonVersion>2.13.4.1</jacksonVersion>
         <junitVersion>3.8.1</junitVersion>
         <javaxValidationVersion>2.0.1.Final</javaxValidationVersion>
         <mySqlVersion>5.1.47</mySqlVersion>
